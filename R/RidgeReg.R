@@ -33,6 +33,21 @@
 
 RidgeReg<-function(X,y,lambda)
 {
+  svd.lm.fit1 <- function(x,y,z){
+    res_svd <- svd(x,LINPACK=TRUE)
+    tuy <- crossprod(res_svd$u,y)
+    de <- res_svd$d/(res_svd$d*res_svd$d + rep(z,length(res_svd$d)))
+
+    return(res_svd$v%*%(tuy*de))
+  }
+
+  svd.lm.fit2 <- function(x,y,z){
+    res_svd <- svd(t(x),LINPACK=TRUE)
+    tuy <- crossprod(res_svd$v,y)
+    de <- res_svd$d/(res_svd$d*res_svd$d + rep(z,length(res_svd$d)))
+
+    return(res_svd$u%*%(tuy*de))
+  }
   num_x<-dim(X)
   if (num_x[1]>=num_x[2])
   {
@@ -43,19 +58,5 @@ RidgeReg<-function(X,y,lambda)
   return(res)
 }
 
-svd.lm.fit1 <- function(x,y,z){
-  res_svd <- svd(x,LINPACK=TRUE)
-  tuy <- crossprod(res_svd$u,y)
-  de <- res_svd$d/(res_svd$d*res_svd$d + rep(z,length(res_svd$d)))
 
-  return(res_svd$v%*%(tuy*de))
-}
-
-svd.lm.fit2 <- function(x,y,z){
-  res_svd <- svd(t(x),LINPACK=TRUE)
-  tuy <- crossprod(res_svd$v,y)
-  de <- res_svd$d/(res_svd$d*res_svd$d + rep(z,length(res_svd$d)))
-
-  return(res_svd$u%*%(tuy*de))
-}
 
