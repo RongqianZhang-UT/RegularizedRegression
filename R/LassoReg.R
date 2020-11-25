@@ -42,9 +42,9 @@ LassoReg <- function(
   X,                   # model matrix
   y,                   # target
   lambda  = .1,        # penalty parameter
-  soft    = TRUE,      # soft vs. hard thresholding
+  soft    = FALSE,      # soft vs. hard thresholding
   thresh     = 1e-6,      # tolerance
-  max_iter    = 100     # number of max iterations
+  max_iter    = 10000     # number of max iterations
   ) {
 
   # soft thresholding function

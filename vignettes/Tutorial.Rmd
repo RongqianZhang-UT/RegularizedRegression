@@ -1,0 +1,146 @@
+---
+title: "Tutorial"
+author: "Rongqian Zhang"
+output: 
+  html_document:
+    theme: spacelab
+    highlight: tango
+    includes:
+    toc: true
+    number_sections: true
+    toc_depth: 3
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    code_folding: show
+vignette: >
+  %\VignetteIndexEntry{Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+## Introduction
+
+`RegularizedRegression` is a package that fits generalized linear models (Ridge Regression & LASSO Regression). It can efficiently estimate the  coefficients given the design matrix, response and regularization parameter. 
+
+This vignette describes the usage of `RegularizedRegression` in R. It also compares the performance of this package with other packages, such as `glmnet` and `MASS`.
+
+# Installation
+
+```{r, eval=FALSE}
+devtools::install_github("qinyiyi7/RegularizedRegression")
+```
+
+# Quick Start
+
+First, we load the `RegularizedRegression` package:
+```{r set up}
+library(RegularizedRegression)
+```
+
+## RidgeReg()
+
+```{r}
+data(longley)
+```
+
+The command loads a macroeconomic data set which provides a well-known example for a highly collinear regression from this saved R data archive.
+
+### Fit Ridge Regression
+
+We fit the model (GNP.deflator ~ GNP+Unemployed+Armed.Forces+Population+Year+Employed) using different lambda
+
+```{r}
+lambda=seq(from=0,to=0.1,by=0.01)
+beta_hat=matrix(nrow=6,ncol = length(lambda))
+for (i in 1:length(lambda))
+{
+  beta_hat[,i]=RidgeReg(scale(longley[,2:7]),longley$GNP.deflator,lambda = lambda[i])
+}
+```
+
+Then, we can visualize the coefficients by executing the `plot.RegPath` function:
+
+```{r}
+plot.RegPath(lambda,beta_hat)
+```
+
+Each curve corresponds to a variable. It shows the path of its coefficient against the $\lambda$. When $\lambda$ increases, all the coefficients shrink to 0.
+
+### Comparison with glmnet()
+
+Finally, we can compare our function to glmnet() function in `glmnet`.
+
+```{r}
+library(glmnet)
+
+result<-glmnet(scale(as.matrix(longley[,2:7])), longley$GNP.deflator, alpha = 0,  lambda = seq(0,0.1,0.01),thresh = 1e-100)
+# plot(lm.ridge(y ~ ., longley,
+#               lambda = seq(0,0.1,0.001)))
+```
+
+```{r}
+glmnet_beta<-as.matrix(result[["beta"]])[,11:1]
+plot.RegPath(lambda,glmnet_beta)
+```
+
+After comparing these two regularization path of coefficients against lambda, we can conclude that the results of our RidgeReg() is correct.
+
+In addtion, we can compare the efficiency of these functions. 
+
+```{r}
+n=1e4
+paste("The average running time of RidgeReg():",round((system.time(for(i in 1:n)RidgeReg(scale(longley[,2:7]),longley$GNP.deflator,lambda = 0.01))/n)[3],digits=6),'sec')
+      
+paste("The average running time of glmnet():",round((system.time(for(i in 1:n)glmnet(scale(as.matrix(longley[,2:7])), longley$GNP.deflator, alpha = 0,  lambda = 0.01,thresh = 1e-100))/n)[3],digits=6),'sec')
+```
+
+Therefore, we can clearly see that RidgeReg() is much more efficient than glmnet().
+
+## LassoReg()
+
+```{r}
+data(swiss)
+```
+
+The command loads a macroeconomic data set which includes standardized fertility measure and socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888.
+
+
+### Fit Lasso Regression
+
+Again, we fit the model (GNP.deflator ~ GNP+Unemployed+Armed.Forces+Population+Year+Employed) using different lambda
+
+```{r}
+lambda = 10^seq(-1, 1, by = .1)
+beta_hat=matrix(nrow=5,ncol = length(lambda))
+for (i in 1:length(lambda))
+{
+  beta_hat[,i]=LassoReg(as.matrix(scale(swiss[,2:6])), swiss$Fertility,lambda = lambda[i],thresh = 1e-12)
+}
+```
+
+```{r}
+plot.RegPath(lambda,beta_hat)
+```
+
+```{r}
+result<-glmnet(as.matrix(scale(swiss[,2:6])), swiss$Fertility, alpha = 1,  lambda =  10^seq(-1, 1, by = .1),thresh = 1e-12)
+```
+
+```{r}
+lambda = 10^seq(-1, 1, by = .1)
+glmnet_beta<-as.matrix(result[["beta"]])[,length(lambda):1]
+plot.RegPath(lambda,glmnet_beta)
+```
+
+Since LassoReg() uses different algorithm to esimate coefficients from glmnet(), we cannot get the same results here. However, as are shown in two above figures, the two functions have similar regularization paths of coefficients, which can prove the correctness of LassoReg().
+
+In addtion, we can compare the efficiency of these functions. 
+
+```{r}
+n=1e4
+paste("The average running time of LassoReg():",round((system.time(for(i in 1:n)LassoReg(as.matrix(scale(swiss[,2:6])), swiss$Fertility,lambda = 3,thresh = 1e-12))/n)[3],digits=6),'sec')
+      
+paste("The average running time of glmnet():",round((system.time(for(i in 1:n)glmnet(as.matrix(scale(swiss[,2:6])), swiss$Fertility, alpha = 1,  lambda = 3,thresh = 1e-12))/n)[3],digits=6),'sec')
+```
+
+Therefore, we can clearly see that LassoReg() is much more efficient than glmnet().
