@@ -33,9 +33,9 @@ install.packages('devtools',repos = 'https://cran.r-project.org/')
 
 ```{r, warning=FALSE,message=FALSE}
 devtools::install_github("qinyiyi7/RegularizedRegression")
-install.packages('glmnet',repos = 'https://cran.r-project.org/')
-install.packages('bench',repos = 'https://cran.r-project.org/')
-install.packages('ggbeeswarm',repos = 'https://cran.r-project.org/')
+install.packages('glmnet',repos = 'https://cran.r-project.org/',dependencies=TRUE)
+install.packages('bench',repos = 'https://cran.r-project.org/',dependencies=TRUE)
+install.packages('ggbeeswarm',repos = 'https://cran.r-project.org/',dependencies=TRUE)
 ```
 
 # Quick Start
