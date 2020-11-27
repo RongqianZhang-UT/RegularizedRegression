@@ -20,7 +20,7 @@
 #' plot_RegPath(lambda,beta_hat)
 #'
 #' @export
-#' @export plot_RegPath
+
 
 plot_RegPath<-function(lambda,beta_hat)
 {
