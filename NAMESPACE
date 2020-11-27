@@ -3,3 +3,4 @@
 export(LassoReg)
 export(RidgeReg)
 export(plot_RegPath)
+importFrom("(\"graphics\",\"plot\",\"points\")",)
