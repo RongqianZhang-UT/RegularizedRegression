@@ -15,4 +15,10 @@ Suggests:
     rmarkdown,
     testthat,
     covr
+Imports:
+    Matrix,
+    ggplot2,
+    glmnet,
+    ggbeeswarm,
+    bench
 VignetteBuilder: knitr
