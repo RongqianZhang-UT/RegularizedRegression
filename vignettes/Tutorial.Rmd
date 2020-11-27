@@ -26,15 +26,20 @@ This vignette describes the usage of `RegularizedRegression` in R. It also compa
 
 # Installation
 
-```{r, eval=FALSE}
+```{r, warning=FALSE,message=FALSE}
 devtools::install_github("qinyiyi7/RegularizedRegression")
+install.packages('glmnet')
+install.packages('bench')
+install.packages('ggbeeswarm')
 ```
 
 # Quick Start
 
-First, we load the `RegularizedRegression` package:
-```{r set up}
+First, we load the `RegularizedRegression` and `glmnet` package:
+```{r}
 library(RegularizedRegression)
+library(glmnet)
+
 ```
 
 ## RidgeReg()
@@ -71,7 +76,7 @@ Each curve corresponds to a variable. It shows the path of its coefficient again
 Finally, we can compare our function to glmnet() function in `glmnet`.
 
 ```{r}
-library(glmnet)
+
 
 result<-glmnet(scale(as.matrix(longley[,2:7])), longley$GNP.deflator, alpha = 0,  lambda = seq(0,0.1,0.01),thresh = 1e-100)
 # plot(lm.ridge(y ~ ., longley,
@@ -83,64 +88,82 @@ glmnet_beta<-as.matrix(result[["beta"]])[,11:1]
 plot.RegPath(lambda,glmnet_beta)
 ```
 
-After comparing these two regularization path of coefficients against lambda, we can conclude that the results of our RidgeReg() is correct.
+After comparing these two regularization path of coefficients against lambda, we can conclude that the results of these two functions are very similar.
+
+Furthermore, we can use all.equal() to show the correctness of RidgeReg().
+
+```{r}
+all.equal(as.vector(beta_hat),as.vector(glmnet_beta),tolerance=0.15)
+```
+
 
 In addtion, we can compare the efficiency of these functions. 
 
-```{r}
-n=1e4
-paste("The average running time of RidgeReg():",round((system.time(for(i in 1:n)RidgeReg(scale(longley[,2:7]),longley$GNP.deflator,lambda = 0.01))/n)[3],digits=6),'sec')
-      
-paste("The average running time of glmnet():",round((system.time(for(i in 1:n)glmnet(scale(as.matrix(longley[,2:7])), longley$GNP.deflator, alpha = 0,  lambda = 0.01,thresh = 1e-100))/n)[3],digits=6),'sec')
+```{r, warning=FALSE,message=FALSE}
+library('bench')
+library('ggbeeswarm')
+result=bench::mark(RidgeReg(scale(longley[,2:7]),longley$GNP.deflator,lambda = 0.1),glmnet(scale(as.matrix(longley[,2:7])), longley$GNP.deflator, alpha = 0,  lambda = 0.1,thresh = 1e-100),check=FALSE)
+print(result)
+plot(result)
 ```
+
 
 Therefore, we can clearly see that RidgeReg() is much more efficient than glmnet().
 
 ## LassoReg()
 
 ```{r}
-data(swiss)
+data(sim_data)
 ```
 
-The command loads a macroeconomic data set which includes standardized fertility measure and socio-economic indicators for each of 47 French-speaking provinces of Switzerland at about 1888.
+The command loads a simulated data set which includes repsonse and 10 predictors.
 
 
 ### Fit Lasso Regression
 
-Again, we fit the model (GNP.deflator ~ GNP+Unemployed+Armed.Forces+Population+Year+Employed) using different lambda
+Again, we fit the model (y ~ X) using different lambda
 
 ```{r}
-lambda = 10^seq(-1, 1, by = .1)
-beta_hat=matrix(nrow=5,ncol = length(lambda))
+
+lambda = seq(0, 1, by = .1)
+beta_hat=matrix(nrow=10,ncol = length(lambda))
 for (i in 1:length(lambda))
 {
-  beta_hat[,i]=LassoReg(as.matrix(scale(swiss[,2:6])), swiss$Fertility,lambda = lambda[i],thresh = 1e-12)
+  beta_hat[,i]=LassoReg(X, y,lambda = lambda[i],thresh = 1e-18,soft=TRUE)
 }
 ```
+
 
 ```{r}
 plot.RegPath(lambda,beta_hat)
 ```
 
 ```{r}
-result<-glmnet(as.matrix(scale(swiss[,2:6])), swiss$Fertility, alpha = 1,  lambda =  10^seq(-1, 1, by = .1),thresh = 1e-12)
+result<-glmnet(X, y, alpha = 1,  lambda =   seq(0, 1, by = .1),thresh = 1e-12)
 ```
 
+
 ```{r}
-lambda = 10^seq(-1, 1, by = .1)
+lambda = seq(0, 1, by = .1)
 glmnet_beta<-as.matrix(result[["beta"]])[,length(lambda):1]
 plot.RegPath(lambda,glmnet_beta)
 ```
 
-Since LassoReg() uses different algorithm to esimate coefficients from glmnet(), we cannot get the same results here. However, as are shown in two above figures, the two functions have similar regularization paths of coefficients, which can prove the correctness of LassoReg().
+After comparing these two regularization path of coefficients against lambda, we can conclude that the results of these two functions are very similar.
+
+Furthermore, we can use all.equal() to show the correctness of LassoReg().
+
+```{r}
+all.equal(as.vector(beta_hat),as.vector(glmnet_beta),tolerance=0.01)
+```
 
 In addtion, we can compare the efficiency of these functions. 
 
-```{r}
-n=1e4
-paste("The average running time of LassoReg():",round((system.time(for(i in 1:n)LassoReg(as.matrix(scale(swiss[,2:6])), swiss$Fertility,lambda = 3,thresh = 1e-12))/n)[3],digits=6),'sec')
-      
-paste("The average running time of glmnet():",round((system.time(for(i in 1:n)glmnet(as.matrix(scale(swiss[,2:6])), swiss$Fertility, alpha = 1,  lambda = 3,thresh = 1e-12))/n)[3],digits=6),'sec')
+```{r, warning=FALSE,message=FALSE}
+
+result=bench::mark(LassoReg(X, y,lambda = 0.1,thresh = 1e-12,soft=TRUE),glmnet(X, y, alpha = 1,  lambda = 0.1,thresh = 1e-12),check=FALSE)
+print(result)
+plot(result)
 ```
 
-Therefore, we can clearly see that LassoReg() is much more efficient than glmnet().
+Therefore, we can clearly see that LassoReg() is less efficient than glmnet().
