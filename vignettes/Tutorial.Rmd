@@ -20,7 +20,7 @@ vignette: >
 ---
 ## Introduction
 
-`RegularizedRegression` is a package that fits generalized linear models (Ridge Regression & LASSO Regression). It can efficiently estimate the  coefficients given the design matrix, response and regularization parameter. 
+`RegularizedRegression` is a package that fits regularized linear models (Ridge Regression & LASSO Regression). It can efficiently estimate the  coefficients given the design matrix, response and regularization parameter. 
 
 This vignette describes the usage of `RegularizedRegression` in R. It also compares the performance of this package with other packages, such as `glmnet` and `MASS`.
 
@@ -36,10 +36,9 @@ install.packages('ggbeeswarm')
 # Quick Start
 
 First, we load the `RegularizedRegression` and `glmnet` package:
-```{r}
+```{r, warning=FALSE,message=FALSE}
 library(RegularizedRegression)
 library(glmnet)
-
 ```
 
 ## RidgeReg()

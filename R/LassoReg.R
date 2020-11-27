@@ -44,7 +44,7 @@ LassoReg <- function(
   lambda  = .1,        # penalty parameter
   soft    = FALSE,      # soft vs. hard thresholding
   thresh     = 1e-6,      # tolerance
-  max_iter    = 10000     # number of max iterations
+  max_iter    = 100000     # number of max iterations
   ) {
 
   # soft thresholding function
@@ -80,7 +80,7 @@ LassoReg <- function(
     i = i + 1
     #if (verbose && i%%10 == 0) message(i)
   }
-  if (i == max_iter) message('the algorithm cannot reach convergence within max_iter, please increase max_iter')
+ #if (i == max_iter) message('the algorithm cannot reach convergence within max_iter, please increase max_iter')
   return(w)
 }
 
