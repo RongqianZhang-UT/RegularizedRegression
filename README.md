@@ -2,9 +2,7 @@
 
  <!-- badges: start -->
   [![Travis build status](https://travis-ci.com/qinyiyi7/RegularizedRegression.svg?branch=master)](https://travis-ci.com/qinyiyi7/RegularizedRegression)
-  <!-- badges: end -->
 
- <!-- badges: start -->
   [![Codecov test coverage](https://codecov.io/gh/qinyiyi7/RegularizedRegression/branch/master/graph/badge.svg)](https://codecov.io/gh/qinyiyi7/RegularizedRegression?branch=master)
   <!-- badges: end -->
   
