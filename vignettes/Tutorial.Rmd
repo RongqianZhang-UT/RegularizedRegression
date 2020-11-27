@@ -27,6 +27,11 @@ This vignette describes the usage of `RegularizedRegression` in R. It also compa
 # Installation
 
 ```{r, warning=FALSE,message=FALSE}
+install.packages('devtools',repos = 'https://cran.r-project.org/')
+```
+
+
+```{r, warning=FALSE,message=FALSE}
 devtools::install_github("qinyiyi7/RegularizedRegression")
 install.packages('glmnet',repos = 'https://cran.r-project.org/')
 install.packages('bench',repos = 'https://cran.r-project.org/')
