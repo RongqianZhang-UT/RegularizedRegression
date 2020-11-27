@@ -67,7 +67,19 @@ for (i in 1:length(lambda))
 }
 ```
 
-Then, we can visualize the coefficients by executing the `plot.RegPath` function:
+Then, we can visualize the coefficients by executing the `plot_RegPath` function:
+
+```{r}
+plot_RegPath<-function(lambda,beta_hat)
+{
+  plot(lambda,beta_hat[1,],type = 'l',ylim = c(min(beta_hat)-0.1,max(beta_hat)+0.1),ylab = 'Coefficients',xlab = 'Lambda')
+for(i in 2:nrow(beta_hat))
+{
+  points(lambda,beta_hat[i,],type = 'l',col=i)
+}
+}
+```
+
 
 ```{r}
 plot_RegPath(lambda,beta_hat)
