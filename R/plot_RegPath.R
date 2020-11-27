@@ -1,4 +1,4 @@
-#' @title plot.RegPath
+#' @title plot_RegPath
 #' @description a function that produces a coefficient profile plot of the coefficient paths given lambda
 #'
 #' @param beta_hat an p*m estimated coefficient matrix
@@ -20,6 +20,7 @@
 #' plot_RegPath(lambda,beta_hat)
 #'
 #' @export
+#' @export plot_RegPath
 
 plot_RegPath<-function(lambda,beta_hat)
 {
