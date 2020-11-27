@@ -28,9 +28,9 @@ This vignette describes the usage of `RegularizedRegression` in R. It also compa
 
 ```{r, warning=FALSE,message=FALSE}
 devtools::install_github("qinyiyi7/RegularizedRegression")
-install.packages('glmnet')
-install.packages('bench')
-install.packages('ggbeeswarm')
+install.packages('glmnet',repos = 'https://cran.r-project.org/')
+install.packages('bench',repos = 'https://cran.r-project.org/')
+install.packages('ggbeeswarm',repos = 'https://cran.r-project.org/')
 ```
 
 # Quick Start
@@ -58,14 +58,14 @@ lambda=seq(from=0,to=0.1,by=0.01)
 beta_hat=matrix(nrow=6,ncol = length(lambda))
 for (i in 1:length(lambda))
 {
-  beta_hat[,i]=RidgeReg(scale(longley[,2:7]),longley$GNP.deflator,lambda = lambda[i])
+  beta_hat[,i]=RidgeReg(scale(longley[,2:7]),longley$y,lambda = lambda[i])
 }
 ```
 
 Then, we can visualize the coefficients by executing the `plot.RegPath` function:
 
 ```{r}
-plot.RegPath(lambda,beta_hat)
+plot_RegPath(lambda,beta_hat)
 ```
 
 Each curve corresponds to a variable. It shows the path of its coefficient against the $\lambda$. When $\lambda$ increases, all the coefficients shrink to 0.
@@ -77,14 +77,14 @@ Finally, we can compare our function to glmnet() function in `glmnet`.
 ```{r}
 
 
-result<-glmnet(scale(as.matrix(longley[,2:7])), longley$GNP.deflator, alpha = 0,  lambda = seq(0,0.1,0.01),thresh = 1e-100)
+result<-glmnet(scale(as.matrix(longley[,2:7])), longley$y, alpha = 0,  lambda = seq(0,0.1,0.01),thresh = 1e-100)
 # plot(lm.ridge(y ~ ., longley,
 #               lambda = seq(0,0.1,0.001)))
 ```
 
 ```{r}
 glmnet_beta<-as.matrix(result[["beta"]])[,11:1]
-plot.RegPath(lambda,glmnet_beta)
+plot_RegPath(lambda,glmnet_beta)
 ```
 
 After comparing these two regularization path of coefficients against lambda, we can conclude that the results of these two functions are very similar.
@@ -134,7 +134,7 @@ for (i in 1:length(lambda))
 
 
 ```{r}
-plot.RegPath(lambda,beta_hat)
+plot_RegPath(lambda,beta_hat)
 ```
 
 ```{r}
@@ -145,7 +145,7 @@ result<-glmnet(X, y, alpha = 1,  lambda =   seq(0, 1, by = .1),thresh = 1e-12)
 ```{r}
 lambda = seq(0, 1, by = .1)
 glmnet_beta<-as.matrix(result[["beta"]])[,length(lambda):1]
-plot.RegPath(lambda,glmnet_beta)
+plot_RegPath(lambda,glmnet_beta)
 ```
 
 After comparing these two regularization path of coefficients against lambda, we can conclude that the results of these two functions are very similar.

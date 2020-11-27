@@ -15,13 +15,13 @@
 #' beta_hat=matrix(nrow=6,ncol = length(lambda))
 #' for (i in 1:length(lambda))
 #' {
-#' beta_hat[,i]=RidgeReg(scale(longley[,2:7]),longley$GNP.deflator,lambda = lambda[i])
+#' beta_hat[,i]=RidgeReg(scale(longley[,2:7]),longley$y,lambda = lambda[i])
 #' }
-#' plot.RegPath(lambda,beta_hat)
+#' plot_RegPath(lambda,beta_hat)
 #'
 #' @export
 
-plot.RegPath<-function(lambda,beta_hat)
+plot_RegPath<-function(lambda,beta_hat)
 {
   plot(lambda,beta_hat[1,],type = 'l',ylim = c(min(beta_hat)-0.1,max(beta_hat)+0.1),ylab = 'Coefficients',xlab = 'Lambda')
 for(i in 2:nrow(beta_hat))
@@ -29,3 +29,5 @@ for(i in 2:nrow(beta_hat))
   points(lambda,beta_hat[i,],type = 'l',col=i)
 }
 }
+
+

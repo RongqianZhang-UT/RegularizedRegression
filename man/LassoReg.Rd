@@ -4,7 +4,7 @@
 \alias{LassoReg}
 \title{LASSO Regression}
 \usage{
-LassoReg(X, y, lambda = 0.1, soft = TRUE, thresh = 1e-06, max_iter = 100)
+LassoReg(X, y, lambda = 0.1, soft = FALSE, thresh = 1e-06, max_iter = 1e+05)
 }
 \arguments{
 \item{X}{an n*p design matrix}
