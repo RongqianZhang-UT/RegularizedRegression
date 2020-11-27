@@ -19,7 +19,7 @@
 #' }
 #' plot_RegPath(lambda,beta_hat)
 #'
-#' @importFrom("graphics","plot","points")
+#' @importFrom graphics plot points
 #' @export
 
 
