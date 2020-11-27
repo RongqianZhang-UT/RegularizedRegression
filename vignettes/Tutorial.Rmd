@@ -101,7 +101,7 @@ In addtion, we can compare the efficiency of these functions.
 ```{r, warning=FALSE,message=FALSE}
 library('bench')
 library('ggbeeswarm')
-result=bench::mark(RidgeReg(scale(longley[,2:7]),longley$GNP.deflator,lambda = 0.1),glmnet(scale(as.matrix(longley[,2:7])), longley$GNP.deflator, alpha = 0,  lambda = 0.1,thresh = 1e-100),check=FALSE)
+result=bench::mark(RidgeReg(scale(longley[,2:7]),longley$y,lambda = 0.1),glmnet(scale(as.matrix(longley[,2:7])), longley$y, alpha = 0,  lambda = 0.1,thresh = 1e-100),check=FALSE)
 print(result)
 plot(result)
 ```
